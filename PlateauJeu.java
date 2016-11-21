@@ -24,6 +24,7 @@ public class PlateauJeu extends JPanel{
 				//g.fillRect(i * IConfig.NB_PIX_CASE, j * IConfig.NB_PIX_CASE,IConfig.NB_PIX_CASE,IConfig.NB_PIX_CASE);
 			}
 		}
+		
 	}
 
 }
