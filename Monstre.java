@@ -8,6 +8,8 @@ public class Monstre extends Soldat{
 	private Carte carte;
 	
 	public Monstre(Carte carte, TypesH type, String nom, Position pos){
+		super(type.getPoints());
+		
 		this.type = type;
 		this.nom = nom;
 		this.pos = pos;
@@ -42,5 +44,9 @@ public class Monstre extends Soldat{
 	
 	public int getPoints(){
 		return type.getPoints();
+	}
+	
+	public Carte getCarte(){
+		return carte;
 	}
 }

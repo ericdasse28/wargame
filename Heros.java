@@ -8,6 +8,8 @@ public class Heros extends Soldat {
 	private Carte carte;
 	
 	public Heros(Carte carte, TypesH type, String nom, Position pos){
+		super(type.getPoints());
+		
 		this.type = type;
 		this.nom = nom;
 		this.setPosition(pos);;
@@ -42,5 +44,9 @@ public class Heros extends Soldat {
 	
 	public int getPoints(){
 		return type.getPoints();
+	}
+	
+	public Carte getCarte(){
+		return carte;
 	}
 }

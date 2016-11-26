@@ -6,7 +6,7 @@ import java.awt.Graphics;
 public class Carte implements ICarte{
 	Element[][] grille;
 	Heros[] listeH;
-	Monstres[] listeM;
+	Monstre[] listeM;
 	
 	@Override
 	public Element getElement(Position pos) {
@@ -105,7 +105,11 @@ public class Carte implements ICarte{
 	public boolean deplaceSoldat(Position pos, Soldat soldat) {
 		// TODO Auto-generated method stub
 		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE){
-			grille[soldat.getPosition().getX()][soldat.getPosition().getY()].setPosition(pos);
+			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=null;//mise à null de la position ancienne
+			soldat.seDeplace(pos);
+			
+			//grille[soldat.getPosition().getX()][soldat.getPosition().getY()].setPosition(pos);
+			
 			return true;
 		}
 		return false;
@@ -125,7 +129,7 @@ public class Carte implements ICarte{
 			for(int i = 0; i < listeM.length; i++)
 				if(perso != listeM[i])
 					liste[i] = listeM[i];
-			listeH = liste;
+			listeM = liste;
 		}
 	}
 
@@ -139,13 +143,14 @@ public class Carte implements ICarte{
 				 * ICI Portee = portee d'attaque mais aussi de deplacement
 				 */
 				//si pos2 donne monstre alors combat si possible
-				if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && grille[pos.getX()][pos.getY()].getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()) - 1)){
-					grille[pos.getX()][pos.getY()].combat(grille[pos2.getX()][pos2.getY()]);
+				if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()) - 1)){
+					((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()]);
 					return true;
 				}
 				//si pos2 donne vide alors deplacement si possible (verification rapide = teleportation)
-				if(grille[pos2.getX()][pos2.getY()] == null && grille[pos.getX()][pos.getY()].getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()))){
-					grille[pos.getX()][pos.getY()].seDeplace(grille[pos2.getX()][pos2.getY()]);
+				if(grille[pos2.getX()][pos2.getY()] == null && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()))){
+					//((Heros)grille[pos.getX()][pos.getY()]).seDeplace(grille[pos2.getX()][pos2.getY()]);
+					((Heros)grille[pos.getX()][pos.getY()]).seDeplace(pos2);
 					return true;
 				}
 			}
@@ -165,7 +170,7 @@ public class Carte implements ICarte{
 				if(grille[i][j] instanceof Heros)
 					g.setColor(IConfig.COULEUR_HEROS);	//Couleur heros
 				else
-					if(grille[i][j] instanceof Monstres)	//Couleur monstres
+					if(grille[i][j] instanceof Monstre)	//Couleur monstres
 						g.setColor(IConfig.COULEUR_MONSTRES);
 					else
 						if(grille[i][j] instanceof Obstacle)	//Couleur obstacle (ROCHER SEULEMENT POUR TESTER)

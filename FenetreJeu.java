@@ -7,6 +7,11 @@ import javax.swing.JFrame;
 
 public class FenetreJeu extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7268814763478703019L;
+
 	public static void main(String[] agrs){
 		JFrame fenetre = new JFrame();
 		fenetre.setTitle("WARGAME!");
