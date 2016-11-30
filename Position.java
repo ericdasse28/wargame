@@ -13,4 +13,8 @@ public class Position implements IConfig {
 	public boolean estVoisine(Position pos) {
 		return ((Math.abs(x-pos.x)<=1) && (Math.abs(y-pos.y)<=1));
 	}
+	public int dist(Position p){
+		double D= Math.pow(p.getX()-this.getX(),2)+Math.pow(p.getY()-this.getY(), 2);
+		return (int) Math.sqrt(D);
+	}
 }
