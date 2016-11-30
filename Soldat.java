@@ -1,21 +1,29 @@
 package wargame;
 
 abstract public class Soldat extends Element implements ISoldat {
-	  protected String nom;
-	  protected int numS;
-	  protected static int nbS = 0;
-	  private static int nbTour = 0;
-	  protected final int POINTS_DE_VIE_MAX;
-	  protected int pointsDeVie;
-	  
-	  Soldat(int pts){
-		  POINTS_DE_VIE_MAX = pointsDeVie = pts;
+	 protected String nom;
+	protected int numS;
+	protected static int nbS=0;
+        protected static int nbtour=0;
+        protected final int POINT_DE_VIE_MAX=0;
+        protected int Points_de_Vie=0;
+        protected final int Portee=0;
+        protected final int Tir=0;
+        protected final int Puissance=0;
+	 public Soldat(){
+		super();
+		numS=++nbS;
+		++nbS;
+	}
+	 Soldat(int pts){
+	 Points_de_Vie = pts;
 	  }
-	  
-	  public int getTour(){ 
-		  return nbTour;
-	  }
-	  public void joueTour(int tour){};
+	public abstract int getPoints();
+	public abstract int getTour();
+	
+	public int getPortee(){
+		return  Portee;
+	}
 	 public void combat(Soldat soldat, Carte carte) {
     	int frappe1;// of this
     	int frappe2;//of soldat
