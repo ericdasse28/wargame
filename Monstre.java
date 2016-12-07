@@ -34,13 +34,6 @@ public class Monstre extends Soldat{
 		return numM;
 	}
 	
-	public int getPortee(){
-		return type.getPortee();
-	}
-	
-	public int getPoints(){
-		return type.getPoints();
-	}
 	
 	public Carte getCarte(){
 		return carte;

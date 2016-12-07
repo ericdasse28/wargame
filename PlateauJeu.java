@@ -30,6 +30,8 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 	JToolBar tools ;
 	JButton newpartie,fintour;
 	JLabel label,hero,monstre;
+	Position init = new Position(-1,-1);
+	Boolean select = false;
 	/******************************************zone carte *****************************************************************/
 public class Zonecarte extends JPanel{
 		
@@ -102,8 +104,30 @@ public class Zonecarte extends JPanel{
 				}
 			}
 			
+			public void mouseClicked(MouseEvent e) {
+				int i = e.getX()/IConfig.NB_PIX_CASE;
+				int j = e.getY()/IConfig.NB_PIX_CASE;
+				Position p = new Position(i,j);
+				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
+					if(select){
+						select = false;
+						if(carte.getElement(p) == null){
+							carte.deplaceSoldat(p, (Soldat)carte.getElement(init));
+							zone.repaint();
+						}
+					}else{
+						Position p2 = carte.trouveHeros(p).getPosition();
+						if(carte.trouveHeros(p2) instanceof Heros && carte.getElement(p2).couleur == COULEUR_HEROS){
+							init = p2;
+							select = true;
+						}
+					}
+				}
+			}
+			
+			
+			
 		});
-		
 		
 	
 	}

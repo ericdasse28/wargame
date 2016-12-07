@@ -8,8 +8,19 @@ import wargame.Obstacle.TypeObstacle;
 public class Carte implements ICarte, IConfig{
 	Element[][] grille; //Les indices correspondent directement aux positions
 	Heros[] listeH;
+	private int[] action;
 	Monstre[] listeM;
 	Obstacle[] listeO;
+	private int vision[][];
+	
+	public int[][] getVision(){
+		return vision;
+	}
+	
+	public void resetAction(){
+		for(int i =0; i < action.length; i++)
+			action[i] = 0;
+	}
 	
 	public Carte(){
 		grille = new Element[LARGEUR_CARTE][HAUTEUR_CARTE];
@@ -50,6 +61,10 @@ public class Carte implements ICarte, IConfig{
 			
 			grille[p.getX()][p.getY()] = listeM[i] = new Monstre(this, ISoldat.TypesM.getTypeMAlea(), 1+i, p);
 		}
+		
+		System.out.println(listeH[0].getPoints()+","+listeM[0].getPoints());
+		listeH[0].combat(listeM[0], this);
+		System.out.println(listeH[0].getPoints()+","+listeM[0].getPoints());
 	}
 	
 	@Override
@@ -200,7 +215,7 @@ public class Carte implements ICarte, IConfig{
 				 */
 				//si pos2 donne monstre alors combat si possible
 				if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()) - 1)){
-					((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()]);
+					((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()], this);
 					return true;
 				}
 				//si pos2 donne vide alors deplacement si possible (verification rapide = teleportation)

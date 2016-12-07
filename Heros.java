@@ -21,6 +21,13 @@ public class Heros extends Soldat implements IConfig {
 		couleur = COULEUR_HEROS;
 	}
 	
+	public void actualiseCouleur(){
+		if(couleur == COULEUR_HEROS)
+			couleur = COULEUR_HEROS_DEJA_JOUE;
+		else
+			couleur = COULEUR_HEROS;
+	}
+	
 	public String getNom(){
 		return Character.toString(nom);
 	}
@@ -33,13 +40,6 @@ public class Heros extends Soldat implements IConfig {
 		return numH;
 	}
 	
-	public int getPortee(){
-		return type.getPortee();
-	}
-	
-	public int getPoints(){
-		return type.getPoints();
-	}
 	
 	public Carte getCarte(){
 		return carte;
@@ -65,6 +65,8 @@ public class Heros extends Soldat implements IConfig {
 	
 	public void seDessiner(Graphics g){
 		super.seDessiner(g);
+		g.setColor(COULEUR_TEXTE);
 		g.drawString(Character.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY() *NB_PIX_CASE + NB_PIX_CASE/2);
+		//System.out.println(nom);
 	}
 }
