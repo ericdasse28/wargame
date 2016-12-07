@@ -47,15 +47,19 @@ public class Monstre extends Soldat{
 	}
 	
 	public String toString(){
+		String ch = "";
+		
 		if (type == Soldat.TypesM.TROLL)
-			return "TROLL";
+			ch += "TROLL";
 		else if (type == Soldat.TypesM.ORC)
-			return "ORC";
+			ch += "ORC";
 		else if (type == Soldat.TypesM.GOBELIN)
-			return "GOBELIN";
+			ch += "GOBELIN";
 		
 		
-		return "INCONNU";
+		else ch += "INCONNU";
+		
+		return ch+" "+nom+" "+super.toString();
 	}
 	
 	public void seDessiner(Graphics g){

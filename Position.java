@@ -5,10 +5,14 @@ import java.awt.Graphics;
 
 public class Position implements IConfig, Dessinable {
 	private int x, y;
-	private Color couleur = COULEUR_INCONNU; /**Comme ca on pourra manipuler la couleur de l'affichage des elements directement
-							*directement a partir de la position*/
+	private Color couleur;
 	
-	Position(int x, int y) { this.x = x; this.y = y; }
+	Position(int x, int y) { 
+		this.x = x; 
+		this.y = y;
+		
+		
+	}
 	public int getX() { return x; }
 	public int getY() { return y; }
 	public void setX(int x) { this.x = x; }
@@ -26,6 +30,7 @@ public class Position implements IConfig, Dessinable {
 		couleur = color;
 	}
 	
+	//return true si la position n'est pas valide
 	public boolean estValide() {
 		return (x<0 || x>=LARGEUR_CARTE || y<0 || y>=HAUTEUR_CARTE);
 	}
@@ -38,8 +43,10 @@ public class Position implements IConfig, Dessinable {
 	
 	/*On dessine une case*/
 	public void seDessiner(Graphics g){
-		g.setColor(couleur);
+		g.setColor(couleur);;
 		g.fillRect(x *NB_PIX_CASE, y * NB_PIX_CASE, NB_PIX_CASE, NB_PIX_CASE);
 	}
+	
+	
 	
 }

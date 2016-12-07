@@ -25,4 +25,8 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
 		  g.setColor(COULEUR_TEXTE);
 		  //g.drawString(nom, pos.getX(), pos.getY());
 	  }
+	  
+	  public String toString(){
+		  return "("+pointsDeVie+"PV / "+POINTS_DE_VIE_MAX+")";
+	  }
 }

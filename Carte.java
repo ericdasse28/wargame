@@ -75,7 +75,7 @@ public class Carte implements ICarte, IConfig{
 		do {
 			p = new Position((int) (Math.random()*(LARGEUR_CARTE+1)),
 					(int) (Math.random()*(HAUTEUR_CARTE+1)));
-		} while (p.estValide());
+		} while (p.estValide() || grille[p.getX()][p.getY()] != null);
 		
 		return p;
 	}

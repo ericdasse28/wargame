@@ -87,14 +87,23 @@ public class Zonecarte extends JPanel{
 		this.add(tools,BorderLayout.NORTH);
 		this.add(zone,BorderLayout.CENTER);
 		this.add(label,BorderLayout.SOUTH);
-		this.addMouseMotionListener(new MouseAdapter() {
+		zone.addMouseMotionListener(new MouseAdapter() {
 			public void mouseMoved(MouseEvent e) {
-		    
-			label.setText("position: " + e.getX()*NB_PIX_CASE+ "," + e.getY()*NB_PIX_CASE + ".");
-			label.repaint();
+				int i = e.getX()/IConfig.NB_PIX_CASE;
+				int j = e.getY()/IConfig.NB_PIX_CASE;
+				Position p = new Position(i,j);
+				
+				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
+					if(carte.getElement(p) != null)
+						label.setText(p.toString()+" "+carte.getElement(p).toString());
+					else
+						label.setText("");
+					label.repaint();
+				}
 			}
 			
 		});
+		
 		
 	
 	}

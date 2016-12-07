@@ -34,4 +34,6 @@ public abstract class Element implements IConfig, Dessinable {
 		pos.setCoul(couleur);
 		pos.seDessiner(g);
 	}
+	
+
 }

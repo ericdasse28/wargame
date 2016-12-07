@@ -46,17 +46,21 @@ public class Heros extends Soldat implements IConfig {
 	}
 	
 	public String toString(){
+		String ch = "";
+		
 		if (type == TypesH.HUMAIN)
-			return "HUMAIN";
+			 ch += "HUMAIN";
 		else if (type == TypesH.NAIN)
-			return "NAIN";
+			 ch += "NAIN";
 		else if (type == TypesH.ELF)
-			return "ELF";
+			 ch += "ELF";
 		else if (type == TypesH.HOBBIT)
-			return "HOBBIT";
+			 ch += "HOBBIT";
 		
 		
-		return "INCONNU";
+		else ch += "INCONNU";
+		 
+		return ch+" "+nom+" "+super.toString();
 	}
 	
 	public void seDessiner(Graphics g){
