@@ -1,7 +1,11 @@
 package wargame;
 
-public abstract class Element {
+import java.awt.Color;
+import java.awt.Graphics;
+
+public abstract class Element implements IConfig, Dessinable {
 	protected Position pos; //position de l'element sur la carte
+	protected Color couleur;
 	
 	/*public Element (int x, int y){
 		pos.setX(x);
@@ -18,12 +22,18 @@ public abstract class Element {
 	}
 	
 	public void setPosition(int x, int y){
-		pos.setX(x);
-		pos.setY(y);
+		pos = new Position(x,y);
 	}
 	
-	public void setPosition(Position pos){
-		pos.setX(pos.getX());
-		pos.setX(pos.getY());
+	public void setPosition(Position p){
+		pos = p;
 	}
+	
+	/*Change la couleur de la position*/
+	public void seDessiner(Graphics g){
+		pos.setCoul(couleur);
+		pos.seDessiner(g);
+	}
+	
+
 }

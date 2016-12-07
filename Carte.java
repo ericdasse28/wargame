@@ -3,10 +3,69 @@ package wargame;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Carte implements ICarte{
-	Element[][] grille;
+import wargame.Obstacle.TypeObstacle;
+
+public class Carte implements ICarte, IConfig{
+	Element[][] grille; //Les indices correspondent directement aux positions
 	Heros[] listeH;
+	private int[] action;
 	Monstre[] listeM;
+	Obstacle[] listeO;
+	private int vision[][];
+	
+	public int[][] getVision(){
+		return vision;
+	}
+	
+	public void resetAction(){
+		for(int i =0; i < action.length; i++)
+			action[i] = 0;
+	}
+	
+	
+	
+	public Carte(){
+		grille = new Element[LARGEUR_CARTE][HAUTEUR_CARTE];
+		listeH = new Heros[NB_HEROS];
+		action = new int[NB_HEROS];
+		listeM = new Monstre[NB_MONSTRES];
+		listeO = new Obstacle[NB_OBSTACLES];
+		vision = new int[HAUTEUR_CARTE][LARGEUR_CARTE];
+		
+		//Positionnement des obstacles sur la carte
+		for (int i = 0; i < NB_OBSTACLES; i++){
+			Position p;
+		
+				p = trouvePositionVide();
+				
+			
+			/*Maintenant on peut inserer*/
+			grille[p.getX()][p.getY()] = listeO[i] = new Obstacle(TypeObstacle.getObstacleAlea(), p);
+		}
+		
+		//Positionnement des heros sur la carte
+		for (int i = 'A'; i < 'A' + NB_HEROS; i++){
+			Position p;
+			
+			do {
+				p = trouvePositionVide();
+			} while (p.getX() >= (LARGEUR_CARTE/2));	
+			// System.out.println(i);
+			
+			grille[p.getX()][p.getY()] = listeH[i - 'A'] = new Heros(this, ISoldat.TypesH.getTypeHAlea(), (char) i, p);
+		}
+		
+		//Positionnement des monstres sur la carte
+		for (int i = 0; i < NB_MONSTRES; i++){
+			Position p;
+			
+			do {
+				p = trouvePositionVide();
+			} while (p.getX() < (LARGEUR_CARTE/2));
+			
+			grille[p.getX()][p.getY()] = listeM[i] = new Monstre(this, ISoldat.TypesM.getTypeMAlea(), 1+i, p);
+		}
+	}
 	
 	@Override
 	public Element getElement(Position pos) {
@@ -15,13 +74,25 @@ public class Carte implements ICarte{
 
 	@Override
 	public Position trouvePositionVide() {
-		int x = (int)Math.random() * (IConfig.LARGEUR_CARTE - 1);
-		int y = (int)Math.random() * (IConfig.HAUTEUR_CARTE - 1);
-		while(grille[x][y] != null){
-			x = (int)Math.random() * (IConfig.LARGEUR_CARTE - 1);
-			y = (int)Math.random() * (IConfig.HAUTEUR_CARTE - 1);
+		/*
+		int x = (int) (Math.random() * (IConfig.LARGEUR_CARTE - 1));
+		int y = (int) (Math.random() * (IConfig.HAUTEUR_CARTE - 1));
+		
+		while(grille[x][y] != null && !((new Position(x, y)).estValide())){
+			x = (int) (Math.random() * (IConfig.LARGEUR_CARTE - 1));
+			y = (int) (Math.random() * (IConfig.HAUTEUR_CARTE - 1));
 		}
 		return new Position(x,y);
+		*/
+		
+		Position p;
+		
+		do {
+			p = new Position((int) (Math.random()*(LARGEUR_CARTE+1)),
+					(int) (Math.random()*(HAUTEUR_CARTE+1)));
+		} while (p.estValide() || grille[p.getX()][p.getY()] != null);
+		
+		return p;
 	}
 
 	@Override
@@ -46,9 +117,9 @@ public class Carte implements ICarte{
 		int rand;
 		//pour chaque position calculee on la stock a la position rand du tableau r
 		for(int i = 0; i < 9; i++){
-			rand = (int)Math.random() * 9;
+			rand = (int) (Math.random() * 9);
 			while(r[rand] != null)
-				rand = (int)Math.random() * 9;
+				rand = (int) (Math.random() * 9);
 			r[rand] = p[i];
 		}
 		//parcourt des positions dans l'ordre random jusqu'a trouver une position valide vide
@@ -62,7 +133,7 @@ public class Carte implements ICarte{
 
 	@Override
 	public Heros trouveHeros() {
-		return listeH[(int)Math.random() * listeH.length];
+		return listeH[(int) (Math.random() * listeH.length)];
 	}
 
 	@Override
@@ -87,9 +158,9 @@ public class Carte implements ICarte{
 		int rand;
 		//pour chaque position calculee on la stock a la position rand du tableau r
 		for(int i = 0; i < 9; i++){
-			rand = (int)Math.random() * 9;
+			rand = (int) (Math.random() * 9);
 			while(r[rand] != null)
-				rand = (int)Math.random() * 9;
+				rand = (int) (Math.random() * 9);
 			r[rand] = p[i];
 		}
 		//parcourt des positions dans l'ordre random jusqu'a trouver un heros
@@ -104,12 +175,10 @@ public class Carte implements ICarte{
 	@Override
 	public boolean deplaceSoldat(Position pos, Soldat soldat) {
 		// TODO Auto-generated method stub
-		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE){
+		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE && soldat.getPosition().estVoisine(pos)){
 			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=null;//mise à null de la position ancienne
-			soldat.seDeplace(pos);
-			
-			//grille[soldat.getPosition().getX()][soldat.getPosition().getY()].setPosition(pos);
-			
+			soldat.seDeplace(pos);	//actualisation de la position du soldat
+			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=soldat; //actualisation de la carte
 			return true;
 		}
 		return false;
@@ -165,7 +234,7 @@ public class Carte implements ICarte{
 
 	@Override
 	public void toutDessiner(Graphics g) {
-		for(int i = 0; i < IConfig.LARGEUR_CARTE; i++){
+		/*for(int i = 0; i < IConfig.LARGEUR_CARTE; i++){
 			for(int j = 0; j < IConfig.HAUTEUR_CARTE; j++){
 				if(grille[i][j] instanceof Heros)
 					g.setColor(IConfig.COULEUR_HEROS);	//Couleur heros
@@ -178,8 +247,52 @@ public class Carte implements ICarte{
 						else
 							g.setColor(Color.GREEN);	//Couleur du plateau
 				g.fillRect(i * IConfig.NB_PIX_CASE + 1, j * IConfig.NB_PIX_CASE - 1,IConfig.NB_PIX_CASE + 1,IConfig.NB_PIX_CASE - 1); //dessinage
+			}*/ //A abandonner, pas tres pratique 
+		
+		
+			//int x1 = 0;
+			//int y1 = 0;
+			//int x2 = 0;
+			//int y2 = LARGEUR_CARTE;
+			
+		
+			//Actualisation de la vision
+			for(int l = 0; l < HAUTEUR_CARTE; l++)
+				for(int c = 0; c < LARGEUR_CARTE; c++)
+					vision[l][c] = 0;
+		
+			//Affichage des heros
+			for (int i = 0; i<NB_HEROS; i++){
+				listeH[i].seDessiner(g);
+				for(int l = listeH[i].getPosition().getY()-listeH[i].getPortee(); l <= listeH[i].getPosition().getY()+listeH[i].getPortee(); l++)
+					for(int c = listeH[i].getPosition().getX()-listeH[i].getPortee(); c <= listeH[i].getPosition().getX()+listeH[i].getPortee(); c++)
+						if(l >= 0 && c >= 0 && l < HAUTEUR_CARTE && c < LARGEUR_CARTE)
+							vision[l][c] = 1;
 			}
-		}
+			
+			//Affichage des monstres
+			for (int i = 0; i<NB_MONSTRES; i++){
+				listeM[i].seDessiner(g);
+			}
+			
+			//Affichage des obstacles
+			for (int i = 0; i<NB_OBSTACLES; i++){
+				listeO[i].seDessiner(g);
+			}
+			
+			//Affichage du FOG
+			g.setColor(COULEUR_INCONNU);
+			for(int l = 0; l < HAUTEUR_CARTE; l++)
+				for(int c = 0; c < LARGEUR_CARTE; c++)
+					if(vision[l][c] == 0)
+						g.fillRect(c *NB_PIX_CASE, l * NB_PIX_CASE, NB_PIX_CASE, NB_PIX_CASE);
+			
+			//Affichage des lignes de la carte
+			for (int x=0; x<LARGEUR_CARTE;x++){
+				g.setColor(Color.BLACK);
+				g.drawLine(0,  x*NB_PIX_CASE, LARGEUR_CARTE*NB_PIX_CASE, x*NB_PIX_CASE);
+					g.drawLine(x*NB_PIX_CASE, 0, x*NB_PIX_CASE, HAUTEUR_CARTE*NB_PIX_CASE);
+			}
 	}
 
 }

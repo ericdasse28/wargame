@@ -1,37 +1,33 @@
 package wargame;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Monstre extends Soldat{
-	private final String nom;
-	private final TypesH type;
+	private final int nom; //ici nom est plutôt un int
+	private final TypesM type;
 	private final int numM;
 	private static int nbM = 0;
 	private Carte carte;
 	
-	public Monstre(Carte carte, TypesH type, String nom, Position pos){
+	public Monstre(Carte carte, TypesM type, int nom, Position pos){
 		super(type.getPoints());
 		
 		this.type = type;
 		this.nom = nom;
-		this.pos = pos;
+		this.pos = new Position(pos.getX(), pos.getY());
 		this.carte = carte;
 		numM = ++nbM;
 		numS = ++nbS;
+		couleur = COULEUR_MONSTRES;
 	}
 	
 	public String getNom(){
-		return nom;
+		return Integer.toString(nom);
 	}
 	
-	public String getType(){
-		if (type == Soldat.TypesH.HUMAIN)
-			return "Humain";
-		else if (type == Soldat.TypesH.NAIN)
-			return "Nain";
-		else if (type == Soldat.TypesH.ELF)
-			return "Elf";
-		else if (type == Soldat.TypesH.HOBBIT)
-			return "Hobbit";
-		return "Inconnu";
+	public TypesM getType(){
+		return type;
 	}
 	
 	public int getNum(){
@@ -48,5 +44,27 @@ public class Monstre extends Soldat{
 	
 	public Carte getCarte(){
 		return carte;
+	}
+	
+	public String toString(){
+		String ch = "";
+		
+		if (type == Soldat.TypesM.TROLL)
+			ch += "TROLL";
+		else if (type == Soldat.TypesM.ORC)
+			ch += "ORC";
+		else if (type == Soldat.TypesM.GOBELIN)
+			ch += "GOBELIN";
+		
+		
+		else ch += "INCONNU";
+		
+		return ch+" "+nom+" "+super.toString();
+	}
+	
+	public void seDessiner(Graphics g){
+		super.seDessiner(g);
+		g.setColor(Color.WHITE);
+		g.drawString(Integer.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY()*NB_PIX_CASE + NB_PIX_CASE/2);
 	}
 }
