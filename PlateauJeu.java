@@ -111,19 +111,46 @@ public class Zonecarte extends JPanel{
 				int j = e.getY()/IConfig.NB_PIX_CASE;
 				Position p = new Position(i,j);
 				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
-					if(select){
-						select = false;
-						if(carte.getElement(p) == null){
+					Position p2;
+					try{
+						if(!select)
+							p2 = carte.trouveHeros(p).getPosition();
+						else
+							p2 = p;
+						
+						if(carte.getElement(p2) instanceof Heros && carte.getElement(p2).couleur == COULEUR_HEROS){
+							init = p2;
+							select = true;
+						}else{
+							if(select){
+								select = false;
+								if(carte.getElement(p2) instanceof Monstre){
+									if(((Soldat)carte.getElement(init)).combat((Soldat)carte.getElement(p2))){
+										((Heros)carte.getElement(init)).actualiseCouleur();
+										zone.repaint();
+									}
+								}
+								if(carte.getElement(p2) == null){
+									if(carte.deplaceSoldat(p2, (Soldat)carte.getElement(init))){
+										((Heros)carte.getElement(p2)).actualiseCouleur();
+										zone.repaint();
+									}
+								}
+							}
+						}
+					}
+					catch(Exception except){}; //l'exception permet de ne pas avoir d'erreur quand on ne trouve pas de heros
+						/*if(carte.getElement(p) == null){
 							carte.deplaceSoldat(p, (Soldat)carte.getElement(init));
 							zone.repaint();
-						}
-					}else{
+						}*/
+					/*}else{
 						Position p2 = carte.trouveHeros(p).getPosition();
-						if(carte.trouveHeros(p2) instanceof Heros){
+						if(carte.trouveHeros(p2) instanceof Heros && carte.getElement(p2).couleur == COULEUR_HEROS){
 							init = p2;
 							select = true;
 						}
-					}
+					}*/
 				}
 			}
 			

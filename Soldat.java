@@ -16,7 +16,13 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
 	  
 	  public int getTour(){ return nbTour;}
 	  public void joueTour(int tour){}
-	  public void combat(Soldat soldat){}
+	  public Boolean combat(Soldat soldat){
+		  if(Math.abs(soldat.getPosition().getX()-this.getPosition().getX()) + Math.abs(soldat.getPosition().getY()-this.getPosition().getY()) <= this.getPortee()){
+			  //combat
+			  return true;
+		  }
+		  return false;
+	  }
 	  public void seDeplace(Position newPos){
 		  this.setPosition(newPos);
 	  }

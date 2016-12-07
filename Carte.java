@@ -204,25 +204,11 @@ public class Carte implements ICarte, IConfig{
 
 	@Override
 	public boolean actionHeros(Position pos, Position pos2) {
-		//verification que pos donne acces a un heros
-		if(pos.getX() >= 0 && pos.getY() >=0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE && grille[pos.getX()][pos.getY()] instanceof Heros)
-			//verification que pos2 est valide et non obstacle ni occupee par un heros
-			if(pos2.getX() >= 0 && pos2.getY() >=0 && pos2.getX() < IConfig.LARGEUR_CARTE && pos2.getY() < IConfig.HAUTEUR_CARTE && !(grille[pos2.getX()][pos2.getY()] instanceof Obstacle || grille[pos2.getX()][pos2.getY()] instanceof Heros)){
-				/*
-				 * ICI Portee = portee d'attaque mais aussi de deplacement
-				 */
-				//si pos2 donne monstre alors combat si possible
-				if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()) - 1)){
-					((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()]);
-					return true;
-				}
-				//si pos2 donne vide alors deplacement si possible (verification rapide = teleportation)
-				if(grille[pos2.getX()][pos2.getY()] == null && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= (Math.abs(pos.getX() - pos2.getX()) + Math.abs(pos.getY() - pos2.getY()))){
-					//((Heros)grille[pos.getX()][pos.getY()]).seDeplace(grille[pos2.getX()][pos2.getY()]);
-					((Heros)grille[pos.getX()][pos.getY()]).seDeplace(pos2);
-					return true;
-				}
-			}
+		//si null deplacement si monstre combat
+		if(grille[pos2.getX()][pos2.getY()] instanceof Monstre)
+			return ((Soldat)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()]);
+		if(grille[pos2.getX()][pos2.getY()] == null)
+			return this.deplaceSoldat(pos2, (Soldat)this.getElement(pos));
 		return false;
 	}
 
