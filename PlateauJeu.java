@@ -29,20 +29,18 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 	Dimension dim;
 	JToolBar tools ;
 	JButton newpartie,fintour;
-	JLabel label,hero,monstre;
+	JLabel label,hero,monstre;		
 	Position init = new Position(-1,-1);
 	Boolean select = false;
 	/******************************************zone carte *****************************************************************/
 public class Zonecarte extends JPanel{
 		
-		private static final long serialVersionUID = 1L;
-		public Zonecarte(){
-	
+	private static final long serialVersionUID = 1L;
+	public Zonecarte(){
 	 	dim = new Dimension(IConfig.NB_PIX_CASE*IConfig.LARGEUR_CARTE,IConfig.NB_PIX_CASE*IConfig.HAUTEUR_CARTE);
 	 	carte = new Carte();
+	}
 		
-		
-		}
 	public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			/*g.setColor(Color.WHITE);wws
@@ -62,7 +60,7 @@ public class Zonecarte extends JPanel{
 			carte.toutDessiner(g);
 	}
 			
-		}
+}
 /*************************************fin zone carte**********************************************************************/
     Zonecarte zone=new Zonecarte();
 	PlateauJeu(){
@@ -76,15 +74,16 @@ public class Zonecarte extends JPanel{
 	    tools = new JToolBar();tools.setRollover(true);
 	    label=new JLabel("     ");
 	    label.setPreferredSize(new Dimension(180,24));
-	    hero=new JLabel(" nombre heros");
+	    hero=new JLabel(" nombre heros : " + IConfig.NB_HEROS);
 	    hero.setPreferredSize(new Dimension(180,24));
-	    monstre=new JLabel("  nombre Monstres");
+	    monstre=new JLabel("  nombre Monstres : " + IConfig.NB_MONSTRES);
 	    monstre.setPreferredSize(new Dimension(180,24));
 		tools.add(newpartie);tools.addSeparator();tools.addSeparator();
 		tools.add(fintour);tools.addSeparator();tools.addSeparator();
 		tools.add(hero);tools.addSeparator();tools.addSeparator();
 		tools.add(monstre);tools.addSeparator();tools.addSeparator();
 		tools.setBackground(Color.CYAN);
+
 		
 		this.add(tools,BorderLayout.NORTH);
 		this.add(zone,BorderLayout.CENTER);
@@ -96,7 +95,7 @@ public class Zonecarte extends JPanel{
 				Position p = new Position(i,j);
 				
 				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
-					if(carte.getElement(p) != null)
+					if(carte.getElement(p) != null && carte.getVision()[j][i] == 1)
 						label.setText(p.toString()+" "+carte.getElement(p).toString());
 					else
 						label.setText("");
@@ -104,6 +103,31 @@ public class Zonecarte extends JPanel{
 				}
 			}
 			
+			public void mouseClicked(MouseEvent e) {
+				int i = e.getX()/IConfig.NB_PIX_CASE;
+				int j = e.getY()/IConfig.NB_PIX_CASE;
+				Position p = new Position(i,j);
+				
+				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
+					if(select){
+						select = false;
+						if(carte.getElement(p) == null){
+							carte.deplaceSoldat(p, (Soldat)carte.getElement(init));
+							zone.repaint();
+						}
+					}else{
+						Position p2 = carte.trouveHeros(p).getPosition();
+						if(carte.trouveHeros(p2) instanceof Heros && carte.getElement(p2).couleur == COULEUR_HEROS){
+							init = p2;
+							select = true;
+						}
+					}
+				}
+			}
+			
+		});
+		/*
+		zone.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int i = e.getX()/IConfig.NB_PIX_CASE;
 				int j = e.getY()/IConfig.NB_PIX_CASE;
@@ -125,9 +149,8 @@ public class Zonecarte extends JPanel{
 				}
 			}
 			
-			
-			
-		});
+		});*/
+		
 		
 	
 	}

@@ -14,7 +14,7 @@ public class Heros extends Soldat implements IConfig {
 		this.pos = new Position(pos.getX(), pos.getY());
 		this.type = type;
 		this.nom = nom;
-		this.setPosition(pos);;
+		this.setPosition(pos);
 		this.carte = carte;
 		numH = ++nbH;
 		numS = ++nbS;
@@ -40,6 +40,13 @@ public class Heros extends Soldat implements IConfig {
 		return numH;
 	}
 	
+	public int getPortee(){
+		return type.getPortee();
+	}
+	
+	public int getPoints(){
+		return type.getPoints();
+	}
 	
 	public Carte getCarte(){
 		return carte;
@@ -67,6 +74,5 @@ public class Heros extends Soldat implements IConfig {
 		super.seDessiner(g);
 		g.setColor(COULEUR_TEXTE);
 		g.drawString(Character.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY() *NB_PIX_CASE + NB_PIX_CASE/2);
-		//System.out.println(nom);
 	}
 }

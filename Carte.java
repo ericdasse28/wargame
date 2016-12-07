@@ -8,10 +8,10 @@ import wargame.Obstacle.TypeObstacle;
 public class Carte implements ICarte, IConfig{
 	Element[][] grille; //Les indices correspondent directement aux positions
 	Heros[] listeH;
-	private int[] action;
 	Monstre[] listeM;
 	Obstacle[] listeO;
 	private int vision[][];
+	private int[] action;
 	
 	public int[][] getVision(){
 		return vision;
@@ -22,11 +22,15 @@ public class Carte implements ICarte, IConfig{
 			action[i] = 0;
 	}
 	
+	
+	
 	public Carte(){
 		grille = new Element[LARGEUR_CARTE][HAUTEUR_CARTE];
 		listeH = new Heros[NB_HEROS];
+		action = new int[NB_HEROS];
 		listeM = new Monstre[NB_MONSTRES];
 		listeO = new Obstacle[NB_OBSTACLES];
+		vision = new int[HAUTEUR_CARTE][LARGEUR_CARTE];
 		
 		//Positionnement des obstacles sur la carte
 		for (int i = 0; i < NB_OBSTACLES; i++){
@@ -61,10 +65,6 @@ public class Carte implements ICarte, IConfig{
 			
 			grille[p.getX()][p.getY()] = listeM[i] = new Monstre(this, ISoldat.TypesM.getTypeMAlea(), 1+i, p);
 		}
-		
-		System.out.println(listeH[0].getPoints()+","+listeM[0].getPoints());
-		listeH[0].combat(listeM[0], this);
-		System.out.println(listeH[0].getPoints()+","+listeM[0].getPoints());
 	}
 	
 	@Override
@@ -175,12 +175,11 @@ public class Carte implements ICarte, IConfig{
 	@Override
 	public boolean deplaceSoldat(Position pos, Soldat soldat) {
 		// TODO Auto-generated method stub
-		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE){
+		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE && soldat.getPosition().estVoisine(pos)){
 			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=null;//mise à null de la position ancienne
-			soldat.seDeplace(pos);
-			
-			//grille[soldat.getPosition().getX()][soldat.getPosition().getY()].setPosition(pos);
-			
+			soldat.seDeplace(pos);	//actualisation de la position du soldat
+			((Heros) soldat).actualiseCouleur();
+			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=soldat; //actualisation de la carte
 			return true;
 		}
 		return false;
@@ -258,11 +257,18 @@ public class Carte implements ICarte, IConfig{
 			//int y2 = LARGEUR_CARTE;
 			
 		
+			//Actualisation de la vision
+			for(int l = 0; l < HAUTEUR_CARTE; l++)
+				for(int c = 0; c < LARGEUR_CARTE; c++)
+					vision[l][c] = 0;
 		
-			
 			//Affichage des heros
 			for (int i = 0; i<NB_HEROS; i++){
 				listeH[i].seDessiner(g);
+				for(int l = listeH[i].getPosition().getY()-listeH[i].getPortee(); l <= listeH[i].getPosition().getY()+listeH[i].getPortee(); l++)
+					for(int c = listeH[i].getPosition().getX()-listeH[i].getPortee(); c <= listeH[i].getPosition().getX()+listeH[i].getPortee(); c++)
+						if(l >= 0 && c >= 0 && l < HAUTEUR_CARTE && c < LARGEUR_CARTE)
+							vision[l][c] = 1;
 			}
 			
 			//Affichage des monstres
@@ -274,6 +280,13 @@ public class Carte implements ICarte, IConfig{
 			for (int i = 0; i<NB_OBSTACLES; i++){
 				listeO[i].seDessiner(g);
 			}
+			
+			//Affichage du FOG
+			g.setColor(COULEUR_INCONNU);
+			for(int l = 0; l < HAUTEUR_CARTE; l++)
+				for(int c = 0; c < LARGEUR_CARTE; c++)
+					if(vision[l][c] == 0)
+						g.fillRect(c *NB_PIX_CASE, l * NB_PIX_CASE, NB_PIX_CASE, NB_PIX_CASE);
 			
 			//Affichage des lignes de la carte
 			for (int x=0; x<LARGEUR_CARTE;x++){
