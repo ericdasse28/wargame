@@ -8,6 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -28,7 +33,7 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 	Carte carte;
 	Dimension dim;
 	JToolBar tools ;
-	JButton newpartie,fintour;
+	JButton newpartie,fintour, sauvegarder, charger;
 	JLabel label,hero,monstre;		
 	Position init = new Position(-1,-1);
 	Boolean select = false;
@@ -71,6 +76,66 @@ public class Zonecarte extends JPanel{
 	    newpartie.setPreferredSize(new Dimension(180,40));
 	    fintour =new JButton  ("   Fin  Tour   ");
 	    fintour.setPreferredSize(new Dimension(180,40));
+	    fintour.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//faire jouer les monstres
+
+				//actualisation des couleurs des heros pour pouvoir les redeplacer ou gain de 1 pdv
+				for(int i = 0; i < IConfig.LARGEUR_CARTE; i++)
+					for(int j = 0; j < IConfig.HAUTEUR_CARTE; j++){
+						Position pt = new Position(i, j);
+						if(carte.getElement(pt) instanceof Heros)
+							if(carte.getElement(pt).couleur == IConfig.COULEUR_HEROS_DEJA_JOUE)
+								((Heros)carte.getElement(pt)).actualiseCouleur();
+							else
+								if(((Heros)carte.getElement(pt)).pointsDeVie < ((Heros)carte.getElement(pt)).POINTS_DE_VIE_MAX)
+									((Heros)carte.getElement(pt)).pointsDeVie++;
+					}
+				zone.repaint();
+			}
+		});
+	    sauvegarder = new JButton("Sauvegarder");
+	    sauvegarder.setPreferredSize(new Dimension(180,40));
+	    charger = new JButton("Charger");
+	    charger.setPreferredSize(new Dimension(180,40));
+	    
+	    sauvegarder.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				FileOutputStream fos = null;
+			    ObjectOutputStream out = null;
+			    try {
+			        fos = new FileOutputStream("wargame.ser",false);
+			        out = new ObjectOutputStream(fos);
+			        out.writeObject(carte);
+			        out.close();
+			        System.out.println("Sauvegarde effectuée");
+			    } catch (IOException ex) {
+			        ex.printStackTrace();
+			    }
+			}
+		});
+	    
+	    charger.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				FileInputStream fos = null;
+				Object c = null;
+			    try {
+			    	fos = new FileInputStream("wargame.ser");
+		            ObjectInputStream oos = new ObjectInputStream(fos);
+		            c = oos.readObject();
+		            fos.close();
+		            if(c instanceof Carte){
+		            	carte = new Carte((Carte)c);
+		            	System.out.println("Restauration effectuée");
+		            	zone.repaint();
+		            }else
+		            	System.out.println("Restauration impossible");
+			    } catch (Exception ex) {
+			        ex.printStackTrace();
+			    }
+			}
+		});
+	    
 	    tools = new JToolBar();tools.setRollover(true);
 	    label=new JLabel("     ");
 	    label.setPreferredSize(new Dimension(180,24));
@@ -82,6 +147,8 @@ public class Zonecarte extends JPanel{
 		tools.add(fintour);tools.addSeparator();tools.addSeparator();
 		tools.add(hero);tools.addSeparator();tools.addSeparator();
 		tools.add(monstre);tools.addSeparator();tools.addSeparator();
+		tools.add(sauvegarder);tools.addSeparator();tools.addSeparator();
+		tools.add(charger);tools.addSeparator();tools.addSeparator();
 		tools.setBackground(Color.CYAN);
 
 		

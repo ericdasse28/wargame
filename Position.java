@@ -2,8 +2,9 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public class Position implements IConfig, Dessinable {
+public class Position implements IConfig, Dessinable, Serializable {
 	private int x, y;
 	private Color couleur;
 	

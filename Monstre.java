@@ -2,8 +2,9 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public class Monstre extends Soldat{
+public class Monstre extends Soldat implements Serializable{
 	private final int nom; //ici nom est plutôt un int
 	private final TypesM type;
 	private final int numM;

@@ -1,8 +1,9 @@
 package wargame;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public class Heros extends Soldat implements IConfig {
+public class Heros extends Soldat implements IConfig, Serializable {
 	private final char nom;
 	private final TypesH type;
 	private final int numH;

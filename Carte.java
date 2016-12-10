@@ -2,10 +2,15 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import wargame.Obstacle.TypeObstacle;
 
-public class Carte implements ICarte, IConfig{
+public class Carte implements ICarte, IConfig, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Element[][] grille; //Les indices correspondent directement aux positions
 	Heros[] listeH;
 	private int[] action;
@@ -22,7 +27,14 @@ public class Carte implements ICarte, IConfig{
 			action[i] = 0;
 	}
 	
-	
+	public Carte(Carte c){
+		this.grille = c.grille;
+		this.listeH = c.listeH;
+		this.action = c.action;
+		this.listeM = c.listeM;
+		this.listeO = c.listeO;
+		this.vision = c.vision;
+	}
 	
 	public Carte(){
 		grille = new Element[LARGEUR_CARTE][HAUTEUR_CARTE];

@@ -1,8 +1,9 @@
 package wargame;
 
 import java.awt.Graphics;
+import java.io.Serializable;
 
-abstract public class Soldat extends Element implements ISoldat, Dessinable {
+abstract public class Soldat extends Element implements ISoldat, Dessinable, Serializable {
 	  //protected String nom;
 	  protected int numS;
 	  protected static int nbS = 0;
@@ -15,7 +16,11 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
 	  }
 	  
 	  public int getTour(){ return nbTour;}
-	  public void joueTour(int tour){}
+	  public void joueTour(int tour){
+		  if(tour == 2){	//tour pair = monstres
+			  this.seDeplace(new Position (0,1));
+		  }
+	  }
 	  public Boolean combat(Soldat soldat){
 		  if(Math.abs(soldat.getPosition().getX()-this.getPosition().getX()) + Math.abs(soldat.getPosition().getY()-this.getPosition().getY()) <= this.getPortee()){
 			  //combat

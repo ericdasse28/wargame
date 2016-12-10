@@ -2,8 +2,9 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public abstract class Element implements IConfig, Dessinable {
+public abstract class Element implements IConfig, Dessinable, Serializable {
 	protected Position pos; //position de l'element sur la carte
 	protected Color couleur;
 	
