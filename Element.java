@@ -2,9 +2,8 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.Serializable;
 
-public abstract class Element implements IConfig, Dessinable, Serializable {
+public abstract class Element implements IConfig, Dessinable {
 	protected Position pos; //position de l'element sur la carte
 	protected Color couleur;
 	
@@ -27,7 +26,8 @@ public abstract class Element implements IConfig, Dessinable, Serializable {
 	}
 	
 	public void setPosition(Position p){
-		pos = p;
+		pos = new Position(p.getX(), p.getY());
+
 	}
 	
 	/*Change la couleur de la position*/

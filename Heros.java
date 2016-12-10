@@ -1,9 +1,8 @@
 package wargame;
 
 import java.awt.Graphics;
-import java.io.Serializable;
 
-public class Heros extends Soldat implements IConfig, Serializable {
+public class Heros extends Soldat implements IConfig {
 	private final char nom;
 	private final TypesH type;
 	private final int numH;
@@ -29,6 +28,14 @@ public class Heros extends Soldat implements IConfig, Serializable {
 			couleur = COULEUR_HEROS;
 	}
 	
+	
+	//Retourne le nom du heros sous forme de caractere
+	public char getNomC(){
+		return nom;
+	}
+	
+	
+	//Retourne le nom du heros sous forme de String
 	public String getNom(){
 		return Character.toString(nom);
 	}
@@ -73,6 +80,9 @@ public class Heros extends Soldat implements IConfig, Serializable {
 	
 	public void seDessiner(Graphics g){
 		super.seDessiner(g);
+		g.setColor(COULEUR_TEXTE);
 		g.drawString(Character.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY() *NB_PIX_CASE + NB_PIX_CASE/2);
 	}
+
+
 }

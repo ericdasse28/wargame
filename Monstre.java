@@ -2,9 +2,8 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.Serializable;
 
-public class Monstre extends Soldat implements Serializable{
+public class Monstre extends Soldat{
 	private final int nom; //ici nom est plutôt un int
 	private final TypesM type;
 	private final int numM;
@@ -23,6 +22,14 @@ public class Monstre extends Soldat implements Serializable{
 		couleur = COULEUR_MONSTRES;
 	}
 	
+	
+	//Retourne le nom sous forme de int
+	public int getNomI(){
+		return nom;
+	}
+	
+	
+	//Retourne le nom sous forme de chaines de caracteres
 	public String getNom(){
 		return Integer.toString(nom);
 	}
@@ -35,13 +42,6 @@ public class Monstre extends Soldat implements Serializable{
 		return numM;
 	}
 	
-	public int getPortee(){
-		return type.getPortee();
-	}
-	
-	public int getPoints(){
-		return type.getPoints();
-	}
 	
 	public Carte getCarte(){
 		return carte;
@@ -68,4 +68,5 @@ public class Monstre extends Soldat implements Serializable{
 		g.setColor(Color.WHITE);
 		g.drawString(Integer.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY()*NB_PIX_CASE + NB_PIX_CASE/2);
 	}
+	
 }

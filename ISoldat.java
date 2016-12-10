@@ -34,6 +34,7 @@ PUISSANCE = puissance; TIR = tir;
    }
    int getPoints(); int getTour(); int getPortee();
    void joueTour(int tour);
-   Boolean combat(Soldat soldat);
+   void combat(Soldat soldat, Carte carte);
+   //Boolean combat(Soldat soldat);
    void seDeplace(Position newPos);
 }

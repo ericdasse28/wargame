@@ -2,21 +2,17 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.Serializable;
 
 import wargame.Obstacle.TypeObstacle;
 
-public class Carte implements ICarte, IConfig, Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Carte implements ICarte, IConfig{
 	Element[][] grille; //Les indices correspondent directement aux positions
 	Heros[] listeH;
 	private int[] action;
 	Monstre[] listeM;
 	Obstacle[] listeO;
 	private int vision[][];
+
 	
 	public int[][] getVision(){
 		return vision;
@@ -27,14 +23,7 @@ public class Carte implements ICarte, IConfig, Serializable{
 			action[i] = 0;
 	}
 	
-	public Carte(Carte c){
-		this.grille = c.grille;
-		this.listeH = c.listeH;
-		this.action = c.action;
-		this.listeM = c.listeM;
-		this.listeO = c.listeO;
-		this.vision = c.vision;
-	}
+	
 	
 	public Carte(){
 		grille = new Element[LARGEUR_CARTE][HAUTEUR_CARTE];
@@ -187,12 +176,35 @@ public class Carte implements ICarte, IConfig, Serializable{
 	@Override
 	public boolean deplaceSoldat(Position pos, Soldat soldat) {
 		// TODO Auto-generated method stub
-		if(pos.getX() >= 0 && pos.getY() >= 0 && pos.getX() < IConfig.LARGEUR_CARTE && pos.getY() < IConfig.HAUTEUR_CARTE && soldat.getPosition().estVoisine(pos)){
-			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=null;//mise à null de la position ancienne
-			soldat.seDeplace(pos);	//actualisation de la position du soldat
-			grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=soldat; //actualisation de la carte
-			return true;
+		
+		/*Il faut d'abord verifier que soldat est sur la carte*/
+		if (!soldat.getPosition().estValide()) {
+			if(!pos.estValide() && soldat.getPosition().estVoisine(pos)){
+				grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=null;//mise à null de la position ancienne
+	
+				soldat.seDeplace(pos);	//actualisation de la position du soldat
+				
+				System.out.println(soldat.getPosition());
+				
+	
+				if (soldat instanceof Heros) {
+					grille[soldat.getPosition().getX()][soldat.getPosition().getY()] = 
+							listeH[(((Heros) soldat).getNomC()-'A')] = 
+								new Heros(this, ((Heros)soldat).getType(), ((Heros)soldat).getNomC(), pos);
+					listeH[(((Heros) soldat).getNomC()-'A')].actualiseCouleur();
+					
+					System.out.println(listeH[(((Heros) soldat).getNomC()-'A')].getPosition());
+				}
+				
+				else if (soldat instanceof Monstre) {
+					grille[soldat.getPosition().getX()][soldat.getPosition().getY()] = listeM[((Monstre) soldat).getNomI()] = (Monstre) soldat;
+				}
+				//grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=soldat; //actualisation de la carte
+				
+				return true;
+			}
 		}
+		
 		return false;
 	}
 
@@ -216,11 +228,46 @@ public class Carte implements ICarte, IConfig, Serializable{
 
 	@Override
 	public boolean actionHeros(Position pos, Position pos2) {
-		//si null deplacement si monstre combat
-		if(grille[pos2.getX()][pos2.getY()] instanceof Monstre)
-			return ((Soldat)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()]);
-		if(grille[pos2.getX()][pos2.getY()] == null)
-			return this.deplaceSoldat(pos2, (Soldat)this.getElement(pos));
+		
+		
+		//verification que pos donne acces a un heros
+		if(!pos.estValide() && grille[pos.getX()][pos.getY()] instanceof Heros) {
+			
+			Heros herosRecup = (Heros) getElement(new Position(pos.getX(),pos.getY())); /*C'est plus facile
+			  																			 *a manipuler...
+			  																			 */
+			
+			
+			//verification que pos2 est valide et non-obstacle, ni occupee par un heros
+			if(!pos2.estValide() && !(grille[pos2.getX()][pos2.getY()] instanceof Obstacle || grille[pos2.getX()][pos2.getY()] instanceof Heros)){
+				/*
+				 * ICI Portee = portee d'attaque mais aussi de deplacement
+				 */
+				
+				
+				
+				
+				//On teste si le tour du heros est passe
+				if (((Heros)grille[pos.getX()][pos.getY()]).getDT())
+					
+					//Si pos2 est a la portee visuelle de heros en position pos
+					if (((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= pos.dist(pos2))
+						
+						//sinon si pos2 donne vide alors deplacement si possible (verification rapide = teleportation)
+						if(grille[pos2.getX()][pos2.getY()] == null){
+							
+							//((Heros)grille[pos.getX()][pos.getY()]).seDeplace(grille[pos2.getX()][pos2.getY()]);
+							
+							return deplaceSoldat(pos2, herosRecup);
+						}
+						else if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= pos.dist(pos2)){
+								((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()], this);
+								return true;
+							}
+			}
+		}
+		
+		
 		return false;
 	}
 
@@ -271,6 +318,10 @@ public class Carte implements ICarte, IConfig, Serializable{
 			//Affichage des monstres
 			for (int i = 0; i<NB_MONSTRES; i++){
 				listeM[i].seDessiner(g);
+				for(int l = listeM[i].getPosition().getY()-listeM[i].getPortee(); l <= listeM[i].getPosition().getY()+listeM[i].getPortee(); l++)
+					for(int c = listeM[i].getPosition().getX()-listeM[i].getPortee(); c <= listeM[i].getPosition().getX()+listeM[i].getPortee(); c++)
+						if(l >= 0 && c >= 0 && l < HAUTEUR_CARTE && c < LARGEUR_CARTE)
+							vision[l][c] = 1;
 			}
 			
 			//Affichage des obstacles
@@ -290,7 +341,6 @@ public class Carte implements ICarte, IConfig, Serializable{
 				g.setColor(Color.BLACK);
 				g.drawLine(0,  x*NB_PIX_CASE, LARGEUR_CARTE*NB_PIX_CASE, x*NB_PIX_CASE);
 					g.drawLine(x*NB_PIX_CASE, 0, x*NB_PIX_CASE, HAUTEUR_CARTE*NB_PIX_CASE);
-			}
+				}
 	}
-
 }

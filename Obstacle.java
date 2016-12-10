@@ -1,8 +1,7 @@
 package wargame;
 import java.awt.Color;
-import java.io.Serializable;
 
-public class Obstacle extends Element implements Serializable {
+public class Obstacle extends Element {
 	public enum TypeObstacle {
 		ROCHER (IConfig.COULEUR_ROCHER), FORET (IConfig.COULEUR_FORET), EAU (IConfig.COULEUR_EAU);
 		private final Color COULEUR;

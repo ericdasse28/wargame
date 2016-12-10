@@ -2,9 +2,8 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.Serializable;
 
-public class Position implements IConfig, Dessinable, Serializable {
+public class Position implements IConfig, Dessinable {
 	private int x, y;
 	private Color couleur;
 	
@@ -41,13 +40,18 @@ public class Position implements IConfig, Dessinable, Serializable {
 	public boolean estVoisine(Position pos) {
 		return ((Math.abs(x-pos.x)<=1) && (Math.abs(y-pos.y)<=1));
 	}
+
 	
 	/*On dessine une case*/
 	public void seDessiner(Graphics g){
-		g.setColor(couleur);
+		g.setColor(couleur);;
 		g.fillRect(x *NB_PIX_CASE, y * NB_PIX_CASE, NB_PIX_CASE, NB_PIX_CASE);
 	}
 	
 	
-	
+	/*Calcule la distance entre deux positions*/
+	public int dist(Position p){
+		double D= Math.pow(p.getX()-this.getX(),2)+Math.pow(p.getY()-this.getY(), 2);
+		return (int) Math.sqrt(D);
+	}
 }
