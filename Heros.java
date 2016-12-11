@@ -7,6 +7,7 @@ public class Heros extends Soldat implements IConfig {
 	private final TypesH type;
 	private final int numH;
 	private static int nbH = 0;
+	private static int nbTrH = 0; //nombre de heros ayant joue
 	private Carte carte;
 	
 	public Heros(Carte carte, TypesH type, char nom, Position pos){
@@ -21,6 +22,28 @@ public class Heros extends Soldat implements IConfig {
 		couleur = COULEUR_HEROS;
 	}
 	
+	
+	//Retourne le nombre de heros ayant deja joue lors d'un tour
+	public static int getNBH(){
+		return nbTrH;
+	}
+	
+	
+	//Incremente le nombre de heros ayant joue pendant le tour
+	public static void incNBH() {	
+		if (getNBH() < NB_HEROS)
+			nbTrH++;
+		nbTrH = 0; //remet a 0 si tous les heros ont joue
+	}
+	
+	
+	//Mutateur de la donnee statique 'nbTrH'
+	public static void setNBH(int val) {
+		nbTrH = val;
+	}
+	
+	
+	//Change la couleur du heros selon qu'il ait deja joue ou pas
 	public void actualiseCouleur(){
 		if(couleur == COULEUR_HEROS)
 			couleur = COULEUR_HEROS_DEJA_JOUE;

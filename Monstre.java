@@ -2,6 +2,7 @@ package wargame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
 
 public class Monstre extends Soldat{
 	private final int nom; //ici nom est plutôt un int
@@ -69,4 +70,55 @@ public class Monstre extends Soldat{
 		g.drawString(Integer.toString(nom), pos.getX()*NB_PIX_CASE + NB_PIX_CASE/2, pos.getY()*NB_PIX_CASE + NB_PIX_CASE/2);
 	}
 	
+	
+	/*Methode qui definit naivement ce que les monstres vont faire...*/
+	public void agir(){
+		boolean act; //0 si le monstre n'agit pas
+		
+		/* Le monstre va t-il rien faire pendant le tour ou agir pour de vrai ? */
+		act = getRandomBoolean();
+		
+		/* S'il agit... */
+		if (act) {
+			Heros h = carte.trouveHeros(pos); //potentiel adversaire
+			
+			/*S'il y a un heros dans les parages ...*/
+			if (h != null){
+				
+				/*Le monstre le degomme! */
+				this.combat(h, carte);
+			}
+			
+			/* Sinon il voit s'il peut se deplacer...*/
+			else {
+			/* D'abord, choisir aleatoirement une position vide ou aller */
+				Position p = carte.trouvePositionVide(pos);
+				
+				if (p != null) {
+					if (!carte.deplaceSoldat(p, this)){
+						this.repos(1); //Il se repose s'il se deplace pas
+					}
+				}
+				else
+					this.repos(1);
+			}
+		}
+		
+		/* S'il agit pas, il se repose aussi */
+		else
+			this.repos(1);
+			
+			
+		
+			
+	}
+	
+	
+	/*Methode qui va nous permettre de generer des booleens aleatoirement*/
+	private boolean getRandomBoolean(){
+		Random random = new Random();
+		
+		return random.nextBoolean();
+	}
 }
+

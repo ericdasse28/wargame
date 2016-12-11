@@ -123,6 +123,10 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
     				mort = true;
     				carte.mort(soldat);
     			}
+    			
+    			((Heros)this).actualiseCouleur();
+    			Heros.incNBH(); //incremente le nombre de heros ayany deja joue
+    			
     		}
     		else {//combat à distance
     			if (this.getPortee() >= pos.dist(soldat.pos)){
@@ -150,10 +154,20 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
     	}
 	 }
   
-
+	 
+	 /*Actualise la position du soldat*/
 	public void seDeplace(Position newPos){
 		this.setPosition(newPos);
-	
 	}
+	
+	
+	/*Simule le repos en incrementant le nombre de points de vie du soldat de 'nbPoints'*/
+	public void repos(int nbPoints){
+		pointsDeVie += nbPoints;
+		
+		if (pointsDeVie > pointsDeVie_MAX)
+			pointsDeVie = pointsDeVie_MAX;
+	}
+	
 
 }

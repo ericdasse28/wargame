@@ -173,9 +173,8 @@ public class Carte implements ICarte, IConfig{
 		return null;
 	}
 
-	@Override
+	
 	public boolean deplaceSoldat(Position pos, Soldat soldat) {
-		// TODO Auto-generated method stub
 		
 		/*Il faut d'abord verifier que soldat est sur la carte*/
 		if (!soldat.getPosition().estValide()) {
@@ -184,20 +183,29 @@ public class Carte implements ICarte, IConfig{
 	
 				soldat.seDeplace(pos);	//actualisation de la position du soldat
 				
-				System.out.println(soldat.getPosition());
+				//System.out.println(soldat.getPosition());
 				
 	
 				if (soldat instanceof Heros) {
 					grille[soldat.getPosition().getX()][soldat.getPosition().getY()] = 
 							listeH[(((Heros) soldat).getNomC()-'A')] = 
 								new Heros(this, ((Heros)soldat).getType(), ((Heros)soldat).getNomC(), pos);
-					listeH[(((Heros) soldat).getNomC()-'A')].actualiseCouleur();
 					
-					System.out.println(listeH[(((Heros) soldat).getNomC()-'A')].getPosition());
+					listeH[(((Heros) soldat).getNomC()-'A')].actualiseCouleur(); //actualisation de la couleur
+					listeH[(((Heros) soldat).getNomC()-'A')].setDT(); //Le heros a passe son tour
+					
+					Heros.incNBH(); //incremente le nombre de heros ayany deja joue
+					
+					//System.out.println(listeH[(((Heros) soldat).getNomC()-'A')].getPosition());
 				}
 				
 				else if (soldat instanceof Monstre) {
-					grille[soldat.getPosition().getX()][soldat.getPosition().getY()] = listeM[((Monstre) soldat).getNomI()] = (Monstre) soldat;
+					grille[soldat.getPosition().getX()][soldat.getPosition().getY()] = 
+							listeM[((Monstre) soldat).getNomI() - 1] = 
+								new Monstre(this, ((Monstre)soldat).getType(), ((Monstre)soldat).getNomI(), pos);
+					
+						listeM[((Monstre) soldat).getNomI() - 1].setDT(); //Le monstre a passe son tour
+							
 				}
 				//grille[soldat.getPosition().getX()][soldat.getPosition().getY()]=soldat; //actualisation de la carte
 				
@@ -248,22 +256,23 @@ public class Carte implements ICarte, IConfig{
 				
 				
 				//On teste si le tour du heros est passe
-				if (((Heros)grille[pos.getX()][pos.getY()]).getDT())
-					
+				if (((Heros)grille[pos.getX()][pos.getY()]).getDT()) {
+				
 					//Si pos2 est a la portee visuelle de heros en position pos
-					if (((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= pos.dist(pos2))
+					if (((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= pos.dist(pos2)) {
 						
 						//sinon si pos2 donne vide alors deplacement si possible (verification rapide = teleportation)
 						if(grille[pos2.getX()][pos2.getY()] == null){
 							
 							//((Heros)grille[pos.getX()][pos.getY()]).seDeplace(grille[pos2.getX()][pos2.getY()]);
-							
 							return deplaceSoldat(pos2, herosRecup);
 						}
 						else if(grille[pos2.getX()][pos2.getY()] instanceof Monstre && ((Heros)grille[pos.getX()][pos.getY()]).getPortee() >= pos.dist(pos2)){
 								((Heros)grille[pos.getX()][pos.getY()]).combat((Monstre)grille[pos2.getX()][pos2.getY()], this);
 								return true;
 							}
+					}
+				}
 			}
 		}
 		
@@ -271,35 +280,40 @@ public class Carte implements ICarte, IConfig{
 		return false;
 	}
 
-	@Override
-	public void jouerSoldats(PanneauJeu pj) {
-		// TODO Auto-generated method stub
+	
+	
+	
+	public void jouerSoldats(PlateauJeu pj) {
+		
+		/*Si c'est pas tous les heros qui ont joue...*/
+		if (Heros.getNBH() < NB_HEROS) {
+			
+			for (int i = 0; i < NB_HEROS; i++) {
+				if (listeH[i].getDT()) { /*Ceux qui ont pas joue*/
+					listeH[i].repos(1);
+				}
+				else {
+					listeH[i].setDT(); //On leur redonne le droit de jouer
+					listeH[i].actualiseCouleur(); //remise de la couleur normale
+				}
+			}
+			
+		}
+		
+		/*Les monstres combattent ou se deplacent (ou font rien)*/
+		for (int i = 0; i < NB_MONSTRES; i++){
+			listeM[i].agir();
+			listeM[i].setDT(); //On lui redonne son droit de jouer (modifie apres les actions...)
+		}
+		
+		pj.repaint();
 		
 	}
 
-	@Override
+	
+	
+	
 	public void toutDessiner(Graphics g) {
-		/*for(int i = 0; i < IConfig.LARGEUR_CARTE; i++){
-			for(int j = 0; j < IConfig.HAUTEUR_CARTE; j++){
-				if(grille[i][j] instanceof Heros)
-					g.setColor(IConfig.COULEUR_HEROS);	//Couleur heros
-				else
-					if(grille[i][j] instanceof Monstre)	//Couleur monstres
-						g.setColor(IConfig.COULEUR_MONSTRES);
-					else
-						if(grille[i][j] instanceof Obstacle)	//Couleur obstacle (ROCHER SEULEMENT POUR TESTER)
-							g.setColor( IConfig.COULEUR_ROCHER );
-						else
-							g.setColor(Color.GREEN);	//Couleur du plateau
-				g.fillRect(i * IConfig.NB_PIX_CASE + 1, j * IConfig.NB_PIX_CASE - 1,IConfig.NB_PIX_CASE + 1,IConfig.NB_PIX_CASE - 1); //dessinage
-			}*/ //A abandonner, pas tres pratique 
-		
-		
-			//int x1 = 0;
-			//int y1 = 0;
-			//int x2 = 0;
-			//int y2 = LARGEUR_CARTE;
-			
 		
 			//Actualisation de la vision
 			for(int l = 0; l < HAUTEUR_CARTE; l++)

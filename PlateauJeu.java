@@ -1,7 +1,7 @@
 package wargame;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -68,15 +68,15 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 	PlateauJeu(){
 	
 		this.setLayout(new BorderLayout());
-		
+		/*
 		newpartie =new JButton("Nouvelle Partie");
 	    newpartie.setPreferredSize(new Dimension(180,40));
 	    fintour =new JButton  ("   Fin  Tour   ");
 	    fintour.setPreferredSize(new Dimension(180,40));
-	    tools = new JToolBar();tools.setRollover(true);
+	    tools = new JToolBar();tools.setRollover(true);*/
 	    label=new JLabel("     ");
 	    label.setPreferredSize(new Dimension(180,24));
-	    hero=new JLabel(" nombre heros : " + IConfig.NB_HEROS);
+	   /* hero=new JLabel(" nombre heros : " + IConfig.NB_HEROS);
 	    hero.setPreferredSize(new Dimension(180,24));
 	    monstre=new JLabel("  nombre Monstres : " + IConfig.NB_MONSTRES);
 	    monstre.setPreferredSize(new Dimension(180,24));
@@ -84,10 +84,10 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 		tools.add(fintour);tools.addSeparator();tools.addSeparator();
 		tools.add(hero);tools.addSeparator();tools.addSeparator();
 		tools.add(monstre);tools.addSeparator();tools.addSeparator();
-		tools.setBackground(Color.CYAN);
+		tools.setBackground(Color.CYAN);*/
 
 		
-		this.add(tools,BorderLayout.NORTH);
+		//this.add(tools,BorderLayout.NORTH);
 		this.add(zone,BorderLayout.CENTER);
 		this.add(label,BorderLayout.SOUTH);
 		zone.addMouseMotionListener(new MouseAdapter() {
@@ -114,14 +114,14 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 				int j = e.getY()/IConfig.NB_PIX_CASE;
 				Position p = new Position(i,j);
 				
-				System.out.println(i+","+j);
+				//System.out.println(i+","+j);
 				
 				if(i < IConfig.LARGEUR_CARTE && j < IConfig.HAUTEUR_CARTE){
 					//Position p2;
 					
-					System.out.println("OK");
+					//System.out.println("OK");
 					try{
-						System.out.println("select"+select);
+						//System.out.println("select"+select);
 						
 						if(!select){
 							/*p2 = carte.trouveHeros(p).getPosition();
@@ -174,12 +174,30 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 			
 		});		
 		
-	
+		
+		
+		
+		
+		/**************************PROGRAMMATION DES BOUTONS****************************/
+		
+		/*TODO : rajouter listeners boutons*/
+		/*fintour.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jouerSoldats();
+			}
+		});*/
 	}
-	
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	public Carte getCarte(){
+		return carte;
+	}
+	
 
 } 
