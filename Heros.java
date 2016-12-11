@@ -33,7 +33,7 @@ public class Heros extends Soldat implements IConfig {
 	public static void incNBH() {	
 		if (getNBH() < NB_HEROS)
 			nbTrH++;
-		nbTrH = 0; //remet a 0 si tous les heros ont joue
+		else nbTrH = 0; //remet a 0 si tous les heros ont joue
 	}
 	
 	

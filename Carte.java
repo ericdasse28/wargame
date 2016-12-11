@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import wargame.Obstacle.TypeObstacle;
+import wargame.PlateauJeu.Zonecarte;
 
 public class Carte implements ICarte, IConfig{
 	Element[][] grille; //Les indices correspondent directement aux positions
@@ -195,6 +196,7 @@ public class Carte implements ICarte, IConfig{
 					listeH[(((Heros) soldat).getNomC()-'A')].setDT(); //Le heros a passe son tour
 					
 					Heros.incNBH(); //incremente le nombre de heros ayany deja joue
+					System.out.println(Heros.getNBH());
 					
 					//System.out.println(listeH[(((Heros) soldat).getNomC()-'A')].getPosition());
 				}
@@ -274,6 +276,8 @@ public class Carte implements ICarte, IConfig{
 					}
 				}
 			}
+			
+			
 		}
 		
 		
@@ -309,6 +313,40 @@ public class Carte implements ICarte, IConfig{
 		pj.repaint();
 		
 	}
+	
+	
+	/*Simple surcharge de la methode jouerSoldats pour des raisons de simplification */
+	public void jouerSoldats(Zonecarte zone){
+		
+		/*Si c'est pas tous les heros qui ont joue...*/
+		if (Heros.getNBH() < NB_HEROS) {
+			
+			for (int i = 0; i < NB_HEROS; i++) {
+				if (listeH[i].getDT()) { /*Ceux qui ont pas joue*/
+					listeH[i].repos(1);
+				}
+				else {
+					listeH[i].setDT(); //On leur redonne le droit de jouer
+					listeH[i].actualiseCouleur(); //remise de la couleur normale
+				}
+			}
+			
+		}
+		else if (Heros.getNBH() == NB_HEROS){
+			for (int i = 0; i < NB_HEROS; i++){
+				listeH[i].setDT(); //On leur redonne le droit de jouer
+				listeH[i].actualiseCouleur(); //remise de la couleur normale
+			}
+		}
+		
+		/*Les monstres combattent ou se deplacent (ou font rien)*/
+		for (int i = 0; i < NB_MONSTRES; i++){
+			listeM[i].agir();
+			listeM[i].setDT(); //On lui redonne son droit de jouer (modifie apres les actions...)
+		}
+		
+		zone.repaint();
+	}
 
 	
 	
@@ -332,10 +370,10 @@ public class Carte implements ICarte, IConfig{
 			//Affichage des monstres
 			for (int i = 0; i<NB_MONSTRES; i++){
 				listeM[i].seDessiner(g);
-				for(int l = listeM[i].getPosition().getY()-listeM[i].getPortee(); l <= listeM[i].getPosition().getY()+listeM[i].getPortee(); l++)
+				/*for(int l = listeM[i].getPosition().getY()-listeM[i].getPortee(); l <= listeM[i].getPosition().getY()+listeM[i].getPortee(); l++)
 					for(int c = listeM[i].getPosition().getX()-listeM[i].getPortee(); c <= listeM[i].getPosition().getX()+listeM[i].getPortee(); c++)
 						if(l >= 0 && c >= 0 && l < HAUTEUR_CARTE && c < LARGEUR_CARTE)
-							vision[l][c] = 1;
+							vision[l][c] = 1;*/
 			}
 			
 			//Affichage des obstacles

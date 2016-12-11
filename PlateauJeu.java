@@ -153,6 +153,11 @@ public class PlateauJeu extends JPanel implements ActionListener, IConfig{
 								init = null;
 								zone.repaint();
 								
+								//System.out.println(Heros.getNBH());
+								if (Heros.getNBH() == NB_HEROS) {
+									carte.jouerSoldats(zone);
+									Heros.incNBH(); //Remise a zero
+								}
 							
 						}
 					}

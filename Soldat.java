@@ -104,6 +104,12 @@ abstract public class Soldat extends Element implements ISoldat, Dessinable {
     	int frappe2;//of soldat
     	
     	if (((this instanceof Heros) && (soldat instanceof Monstre)) || ((this instanceof Monstre) && (soldat instanceof Heros))){
+    		
+    		if (this instanceof Heros) {
+    			Heros.incNBH(); //On incremente le nombre de heros ayant deja joue
+    		}
+    		
+    		
     		if (this.pos.estVoisine(soldat.pos)){// combat corps à corps
     			frappe1 =(int) (Math.random()*(this.getPuissance()));
     			frappe2 = (int) (Math.random()*soldat.getPuissance());
